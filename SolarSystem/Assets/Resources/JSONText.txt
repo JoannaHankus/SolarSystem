@@ -1,0 +1,59 @@
+{
+	"celestialJson": [
+	{
+		"name": "Sun",
+		"size": 696,
+		"distance": 0,
+		"mass"": 333000
+	},
+	{
+		"name": "Mercury",
+		"size": 2.4,
+		"distance": 50,
+		"mass"": 0.055
+	},
+	{
+		"name": "Venus",
+		"size": 6,
+		"distance": 100,
+		"mass"":  0.815
+	},
+	{
+		"name": "Earth",
+		"size": 6.3,
+		"distance": 151.48,
+		"mass"": 1
+	},
+	{
+		"name": "Mars",
+		"size": 3.4,
+		"distance": 200,
+		"mass"": 0.107
+	},
+	{
+		"name": "Jupiter",
+		"size": 15,
+		"distance": 300,
+		"mass"": 318
+	},
+	{
+		"name": "Saturn",
+		"size": 12,
+		"distance": 380,
+		"mass"": 95
+	},
+	{
+		"name": "Uranus",
+		"size": 5,
+		"distance": 460,
+		"mass"": 14
+	},
+	{
+		"name": "Neptune",
+		"size": 4,
+		"distance": 540,
+		"mass"": 17
+	}
+
+]
+}
