@@ -8,42 +8,37 @@ public class CelestialController : MonoBehaviour
 
     static CelestialController instance;
     Celestial[] celestials;
-    public List<string> celestial_names = new List<string>() { "Sun", "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune" };
-
-    private List<float> celestial_sizes = new List<float>() { 696f, 2.4f, 6f, 6.3f, 3.4f, 15f, 12f, 5f, 4f };
-    private List<float> celestial_distances = new List<float>() { 0, 50f, 100f, 151.48f, 200f, 300f, 380f, 460f, 540f };
-
-    private List<float> celestial_masses = new List<float>() { 333000f, 0.055f, 0.815f, 1, 0.107f, 318f, 95, 14, 17 };
-
     float sun_distance = 0;
 
-    //public TextAsset textJSON;
+    public TextAsset textJSON;
 
-    //[System.Serializable]
-    //public class CelestialJson
-    //{
-    //    public string name;
-    //    public float size;
-    //    public float distance;
-    //    public float mass;
-    //}
+    [System.Serializable]
+    public class CelestialJson
+    {
+        public string name;
+        public float size;
+        public float distance;
+        public float mass;
+    }
 
-    //[System.Serializable]
-    //public class CelestialList
-    //{
-    //    public CelestialJson[] celestialJson;
-    //}
+    [System.Serializable]
+    public class CelestialList
+    {
+        public CelestialJson[] celestialJson;
+    }
 
-    //public CelestialList myCelestialList = new CelestialList();
+    public CelestialList myCelestialList = new CelestialList();
 
-   
+
 
     void Start()
     {
-        //textJSON = Resources.Load<TextAsset>("JSONText");
-        //myCelestialList = JsonUtility.FromJson<CelestialList>(textJSON.text);
-        //Debug.Log(myCelestialList.celestialJson[0]);
-        //JsonLoader.loadJson();
+        
+
+        textJSON = Resources.Load<TextAsset>("JSONText");
+        
+        myCelestialList = JsonUtility.FromJson<CelestialList>(textJSON.text);
+        Debug.Log(myCelestialList.celestialJson[0].name);
         var texture_skybox = Resources.Load<Texture2D>("Textures/skybox");
         var cam = FindObjectOfType<Camera>();
         cam.gameObject.AddComponent<CameraMovement>();
@@ -54,7 +49,7 @@ public class CelestialController : MonoBehaviour
         for (int i =0; i< 9; i++)
         {
             GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            sun_distance = celestial_distances[i] * 10;
+            sun_distance = myCelestialList.celestialJson[i].distance * 10;
             var celestial_diameter = 1f;
 
             sphere.transform.position = new Vector3(0, 0, sun_distance);
@@ -66,34 +61,34 @@ public class CelestialController : MonoBehaviour
             sphere.AddComponent<Celestial>();
             sphere.GetComponent<Celestial>().rb = sphere.GetComponent<Rigidbody>();
             sphere.GetComponent<Celestial>().rb.useGravity = false;
-            sphere.GetComponent<Celestial>().rb.mass = celestial_masses[i];
+            sphere.GetComponent<Celestial>().rb.mass = myCelestialList.celestialJson[i].mass;
 
-            sphere.GetComponent<Celestial>().bodyName = celestial_names[i];
+            sphere.GetComponent<Celestial>().bodyName = myCelestialList.celestialJson[i].name;
 
             if (sphere.GetComponent<Celestial>().bodyName == "Sun") {
-                sphere.GetComponent<Celestial>().radius = celestial_sizes[i];
+                sphere.GetComponent<Celestial>().radius = myCelestialList.celestialJson[i].size;
                 Debug.Log(sphere.GetComponent<Celestial>().radius);
             }
             else { 
-                sphere.GetComponent<Celestial>().radius = celestial_sizes[i] * 100;
+                sphere.GetComponent<Celestial>().radius = myCelestialList.celestialJson[i].size * 100;
                 Debug.Log(sphere.GetComponent<Celestial>().radius);
 
             }
-            sphere.name = celestial_names[i];
+            sphere.name = myCelestialList.celestialJson[i].name;
             if (sphere.GetComponent<Celestial>().bodyName == "Sun")
             {
-                celestial_diameter = celestial_sizes[i] ;
+                celestial_diameter = myCelestialList.celestialJson[i].size;
             }
             else
             {
-                celestial_diameter = celestial_sizes[i] * 10;
+                celestial_diameter = myCelestialList.celestialJson[i].size * 10;
 
             }
             sphere.transform.localScale = new Vector3(celestial_diameter, celestial_diameter, celestial_diameter);
 
             Material newMaterial = new Material(Shader.Find("Standard"));
 
-            var texture = Resources.Load<Texture2D>("Textures/" + celestial_names[i]);
+            var texture = Resources.Load<Texture2D>("Textures/" + myCelestialList.celestialJson[i].name);
             newMaterial.SetTexture("_MainTex", texture);
             sphere.GetComponent<MeshRenderer>().material = newMaterial;
 
@@ -134,12 +129,6 @@ public class CelestialController : MonoBehaviour
                     float r = Vector3.Distance(a.transform.position, b.transform.position);
                     Vector3 forceDir = (b.transform.position - a.transform.position).normalized;
                     a.GetComponent<Rigidbody>().AddForce(forceDir * (UniverseData.gravitationalConstant * (m1 * m2) / (r * r)));
-                    //acceleration += forceDir * (UniverseData.gravitationalConstant * (m1 * m2)/ (r * r));
-                    //Debug.Log(a.bodyName + " " + b.bodyName);
-                    //a.UpdateVelocity(acceleration, UniverseData.physicsTimeStep);
-                    //a.UpdatePosition(UniverseData.physicsTimeStep);
-
-
 
                 }
             }
@@ -159,7 +148,6 @@ public class CelestialController : MonoBehaviour
                     float m2 = b.rb.mass;
                     float r = Vector3.Distance(a.transform.position, b.transform.position);
                     a.transform.LookAt(b.transform);
-                    //a.velocity += a.transform.right * Mathf.Sqrt((UniverseData.gravitationalConstant * m2) / r);
                     a.GetComponent<Rigidbody>().velocity += a.transform.right * Mathf.Sqrt((UniverseData.gravitationalConstant * m2) / r);
                 }
             }
@@ -186,7 +174,6 @@ public class CelestialController : MonoBehaviour
                 Vector3 forceDir = (body.rb.position - point).normalized;
                 Debug.Log("ForceDir: " + forceDir);
 
-                //wypadkowa przyspieszen
                 acceleration += forceDir * UniverseData.gravitationalConstant * body.mass / sqrDst;
 
             }
